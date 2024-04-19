@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, PackedSequence
 
-from WordAttention import WordAttention
+from model.WordAttention import WordAttention
 
 class SentenceAttention(nn.Module):
     """

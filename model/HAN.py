@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, PackedSequence
 
-from SentenceAttention import SentenceAttention
+from model.SentenceAttention import SentenceAttention
 
 class HierarchicalAttentionNetwork(nn.Module):
     def __init__(self, num_classes, vocab_size, embed_dim, word_gru_hidden_dim, sent_gru_hidden_dim,
