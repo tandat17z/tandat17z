@@ -1,7 +1,7 @@
 import torch
-from test import Tester
+from tester import Tester
 from utils.utils import MetricTracker
-
+from tqdm import tqdm
 
 class Trainer:
     def __init__(self, config, model, optimizer, criterion, dataloader):
@@ -38,7 +38,8 @@ class Trainer:
         self.losses.reset()
         self.accs.reset()
 
-        for batch_idx, (docs, labels, doc_lengths, sent_lengths) in enumerate(self.dataloader):
+        t = tqdm(iter(self.dataloader), total=len(self.dataloader), desc='Epoch {}'.format(epoch_idx))
+        for batch_idx, (docs, labels, doc_lengths, sent_lengths) in enumerate(t):
             batch_size = labels.size(0)
 
             docs = docs.to(self.device)  # (batch_size, padded_doc_length, padded_sent_length)
@@ -69,8 +70,8 @@ class Trainer:
             self.losses.update(loss.item(), batch_size)
             self.accs.update(acc, batch_size)
 
-            print('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
-                    epoch_idx, batch_idx, len(self.dataloader), loss=self.losses, acc=self.accs))
+            # print('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
+            #         epoch_idx, batch_idx, len(self.dataloader), loss=self.losses, acc=self.accs))
 
         log = {'loss': self.losses.avg, 'acc': self.accs.avg}
         return log

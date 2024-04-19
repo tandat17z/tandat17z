@@ -62,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument("--word_att_dim", type=int, default=200)
     parser.add_argument("--sent_att_dim", type=int, default=200)
     
-    parser.add_argument("--vocab_path", type=str, default="data/glove/glove.6B.100d.txt")
+    parser.add_argument("--vocab_path", type=str, default="data/glove/glove.txt")
     parser.add_argument("--cache_data_dir", type=str, default="data/news20/")
 
     # NOTE MODIFICATION (EMBEDDING)

@@ -18,6 +18,7 @@ class Tester:
         self.best_acc = 0
 
     def eval(self):
+        print("Tester.eval...")
         self.model.eval()
         with torch.no_grad():
             self.accs.reset()
@@ -40,27 +41,3 @@ class Tester:
             self.best_acc = max(self.best_acc, self.accs.avg)
 
             print('Test Average Accuracy: {acc.avg:.4f}'.format(acc=self.accs))
-
-
-if __name__ == "__main__":
-    if not os.path.exists("best_model/model.pth.tar"):
-        print("Visualization requires pretrained model to be saved under ./best_model.\n")
-        print("Please run 'python train.py <args>'")
-        sys.exit()
-
-    checkpoint = torch.load("best_model/model.pth.tar")
-    model = checkpoint['model']
-    model.eval()
-
-    dataset = News20Dataset("data/news20/", "data/glove/glove.6B.100d.txt", is_train=False)
-    doc = "First of all, realize that Tesla invented AC power generators, motors,\
-    transformers, conductors, etc. Technically, *ALL* transformers are Tesla\
-    coils.  In general though when someone refers to a Tesla coil, they mean\
-    an 'air core resonant transformers'."
-
-    result = visualize(model, dataset, doc)
-
-    with open('result.html', 'w') as f:
-        f.write(result)
-
-    webbrowser.open_new('file://'+os.getcwd()+'/result.html')

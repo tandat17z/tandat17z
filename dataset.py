@@ -24,7 +24,7 @@ class News20Dataset(Dataset):
         self.data = fetch_20newsgroups(
             data_home=cache_data_dir,
             subset=self.split,
-            categories=['sci.crypt', 'sci.electronics', 'sci.med', 'sci.space'],
+            # categories=['sci.crypt', 'sci.electronics', 'sci.med', 'sci.space'],
             shuffle=False,
             remove=('headers', 'footers', 'quotes'))
 
@@ -76,27 +76,26 @@ class News20Dataset(Dataset):
     
     @property
     def num_classes(self):
-        return 4
-        # return len(list(self.data.target_names))
+        return len(list(self.data.target_names))
 
 
-# def collate_fn(batch):
-#     batch = filter(lambda x: x is not None, batch)
-#     docs, labels, doc_lengths, sent_lengths = list(zip(*batch))
+def collate_fn(batch):
+    batch = filter(lambda x: x is not None, batch)
+    docs, labels, doc_lengths, sent_lengths = list(zip(*batch))
 
-#     bsz = len(labels)
-#     batch_max_doc_length = max(doc_lengths)
-#     batch_max_sent_length = max([max(sl) if sl else 0 for sl in sent_lengths])
+    bsz = len(labels)
+    batch_max_doc_length = max(doc_lengths)
+    batch_max_sent_length = max([max(sl) if sl else 0 for sl in sent_lengths])
 
-#     docs_tensor = torch.zeros((bsz, batch_max_doc_length, batch_max_sent_length)).long()
-#     sent_lengths_tensor = torch.zeros((bsz, batch_max_doc_length)).long()
+    docs_tensor = torch.zeros((bsz, batch_max_doc_length, batch_max_sent_length)).long()
+    sent_lengths_tensor = torch.zeros((bsz, batch_max_doc_length)).long()
 
-#     for doc_idx, doc in enumerate(docs):
-#         doc_length = doc_lengths[doc_idx]
-#         sent_lengths_tensor[doc_idx, :doc_length] = torch.LongTensor(sent_lengths[doc_idx])
-#         for sent_idx, sent in enumerate(doc):
-#             sent_length = sent_lengths[doc_idx][sent_idx]
-#             docs_tensor[doc_idx, sent_idx, :sent_length] = torch.LongTensor(sent)
+    for doc_idx, doc in enumerate(docs):
+        doc_length = doc_lengths[doc_idx]
+        sent_lengths_tensor[doc_idx, :doc_length] = torch.LongTensor(sent_lengths[doc_idx])
+        for sent_idx, sent in enumerate(doc):
+            sent_length = sent_lengths[doc_idx][sent_idx]
+            docs_tensor[doc_idx, sent_idx, :sent_length] = torch.LongTensor(sent)
 
-#     return docs_tensor, torch.LongTensor(labels), torch.LongTensor(doc_lengths), sent_lengths_tensor
+    return docs_tensor, torch.LongTensor(labels), torch.LongTensor(doc_lengths), sent_lengths_tensor
     
