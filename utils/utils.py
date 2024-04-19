@@ -5,6 +5,8 @@ from dataset import collate_fn
 from pylab import *
 from nltk.tokenize import word_tokenize, sent_tokenize
 
+import matplotlib
+import matplotlib.pyplot as plt
 
 # NOTE MODIFICATION (REFACTOR)
 class MetricTracker(object):
@@ -56,3 +58,72 @@ def get_pretrained_weights(glove_path, corpus_vocab, embed_dim, device):
         print("weight size:", glove_pretrained.size())
         torch.save(glove_pretrained, save_dir)
     return glove_pretrained
+
+
+# NOTE MODIFICATION (FEATURE)
+# referenced to https://gist.github.com/ihsgnef/f13c35cd46624c8f458a4d23589ac768
+def map_sentence_to_color(words, scores, sent_score):
+    """
+    :param words: array of words
+    :param scores: array of attention scores each corresponding to a word
+    :param sent_score: sentence attention score
+    :return: html formatted string
+    """
+
+    sentencemap = matplotlib.cm.get_cmap('binary')
+    wordmap = matplotlib.cm.get_cmap('OrRd')
+    result = '<p><span style="margin:5px; padding:5px; background-color: {}">'\
+        .format(matplotlib.colors.rgb2hex(sentencemap(sent_score)[:3]))
+    template = '<span class="barcode"; style="color: black; background-color: {}">{}</span>'
+    for word, score in zip(words, scores):
+        color = matplotlib.colors.rgb2hex(wordmap(score)[:3])
+        result += template.format(color, '&nbsp' + word + '&nbsp')
+    result += '</span><p>'
+    return result
+
+
+# NOTE MODIFICATION (FEATURE)
+def bar_chart(categories, scores, graph_title='Prediction', output_name='prediction_bar_chart.png'):
+    y_pos = arange(len(categories))
+
+    plt.bar(y_pos, scores, align='center', alpha=0.5)
+    plt.xticks(y_pos, categories)
+    plt.ylabel('Attention Score')
+    plt.title(graph_title)
+
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+
+    plt.savefig(output_name)
+
+
+# NOTE MODIFICATION (FEATURE)
+def visualize(model, dataset, doc):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    """
+    # Predicts, and visualizes one document with html file
+    :param model: pretrained model
+    :param dataset: news20 dataset
+    :param doc: document to feed in
+    :return: html formatted string for whole document
+    """
+
+    orig_doc = [word_tokenize(sent) for sent in sent_tokenize(doc)]
+    doc, num_sents, num_words = dataset.transform(doc)
+    label = 0  # dummy label for transformation
+
+    doc, label, doc_length, sent_length = collate_fn([(doc, label, num_sents, num_words)])
+    score, word_att_weight, sentence_att_weight \
+        = model(doc.to(device), doc_length.to(device), sent_length.to(device))
+
+    # predicted = int(torch.max(score, dim=1)[1])
+    classes = ['Cryptography', 'Electronics', 'Medical', 'Space']
+    result = "<h2>Attention Visualization</h2>"
+
+    bar_chart(classes, torch.softmax(score.detach(), dim=1).flatten().cpu(), 'Prediction')
+    result += '<br><img src="prediction_bar_chart.png"><br>'
+    for orig_sent, att_weight, sent_weight in zip(orig_doc, word_att_weight[0].tolist(), sentence_att_weight[0].tolist()):
+        result += map_sentence_to_color(orig_sent, att_weight, sent_weight)
+
+    return result
+

@@ -9,7 +9,7 @@ from model.HAN import HierarchicalAttentionNetwork
 from dataset import News20Dataset
 from dataloader import MyDataLoader
 from trainer import Trainer
-from utils import get_pretrained_weights
+from utils.utils import get_pretrained_weights
 
 
 def train(config, device):
@@ -57,8 +57,8 @@ if __name__ == '__main__':
     parser.add_argument("--embed_dim", type=int, default=100)
     parser.add_argument("--word_gru_hidden_dim", type=int, default=100)
     parser.add_argument("--sent_gru_hidden_dim", type=int, default=100)
-    # parser.add_argument("--word_gru_num_layers", type=int, default=1)
-    # parser.add_argument("--sent_gru_num_layers", type=int, default=1)
+    parser.add_argument("--word_gru_num_layers", type=int, default=1)
+    parser.add_argument("--sent_gru_num_layers", type=int, default=1)
     parser.add_argument("--word_att_dim", type=int, default=200)
     parser.add_argument("--sent_att_dim", type=int, default=200)
     
