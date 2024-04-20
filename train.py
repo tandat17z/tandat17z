@@ -23,20 +23,11 @@ def train(config, device):
         embed_dim=config.embed_dim,
         word_gru_hidden_dim=config.word_gru_hidden_dim,
         sent_gru_hidden_dim=config.sent_gru_hidden_dim,
-        word_gru_num_layers=config.word_gru_num_layers,
-        sent_gru_num_layers=config.sent_gru_num_layers,
-        word_att_dim=config.word_att_dim,
-        sent_att_dim=config.sent_att_dim,
-        use_layer_norm=config.use_layer_norm,
         dropout=config.dropout).to(device)
 
     optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, model.parameters()), lr=config.lr)
+    criterion = nn.NLLLoss(reduction='sum').to(device) 
 
-    # NOTE MODIFICATION (BUG)
-    # criterion = nn.NLLLoss(reduction='sum').to(device) # option 1
-    criterion = nn.CrossEntropyLoss(reduction='sum').to(device)  # option 2
-
-    # NOTE MODIFICATION (EMBEDDING)
     if config.pretrain:
         weights = get_pretrained_weights("data/glove", dataset.vocab, config.embed_dim, device)
         model.sent_attention.word_attention.init_embeddings(weights)
@@ -57,10 +48,6 @@ if __name__ == '__main__':
     parser.add_argument("--embed_dim", type=int, default=100)
     parser.add_argument("--word_gru_hidden_dim", type=int, default=100)
     parser.add_argument("--sent_gru_hidden_dim", type=int, default=100)
-    parser.add_argument("--word_gru_num_layers", type=int, default=1)
-    parser.add_argument("--sent_gru_num_layers", type=int, default=1)
-    parser.add_argument("--word_att_dim", type=int, default=200)
-    parser.add_argument("--sent_att_dim", type=int, default=200)
     
     parser.add_argument("--vocab_path", type=str, default="data/glove/glove.txt")
     parser.add_argument("--cache_data_dir", type=str, default="data/news20/")
@@ -70,7 +57,6 @@ if __name__ == '__main__':
     parser.add_argument("--freeze", type=bool, default=False)
 
     # NOTE MODIFICATION (FEATURES)
-    parser.add_argument("--use_layer_norm", type=bool, default=True)
     parser.add_argument("--dropout", type=float, default=0.1)
 
     config = parser.parse_args()

@@ -1,0 +1,6 @@
+- class News20Dataset(Dataset): Load dataset từ sklearn.datasets.fetch_20newsgroups
+- class MyDataLoader(DataLoader): Đóng gói Dataset + chuẩn hóa (padding)
+    - docs (batch, max_num_sents, max_num_words)
+    - labels (batch)
+    - doc_lengths (batch)
+    - sent_lengths (batch, max_num_sents)
