@@ -70,7 +70,7 @@ class Trainer:
             self.losses.update(loss.item(), batch_size)
             self.accs.update(acc, batch_size)
 
-            tqdm.write('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
+            t.set_description('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
                      epoch_idx, batch_idx, len(self.dataloader), loss=self.losses, acc=self.accs))
             # print('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
             #         epoch_idx, batch_idx, len(self.dataloader), loss=self.losses, acc=self.accs))
