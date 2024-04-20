@@ -18,7 +18,7 @@ class Trainer:
         self.tester = Tester(self.config, self.model)
 
     def train(self):
-        for epoch in range(self.config.num_epochs):
+        for epoch in range(1, self.config.num_epochs + 1):
             result = self._train_epoch(epoch)
             print('Epoch: [{0}]\t Avg Loss {loss:.4f}\t Avg Accuracy {acc:.3f}'.format(epoch, loss=result['loss'], acc=result['acc']))
             # NOTE MODIFICATION (TEST)
@@ -70,6 +70,8 @@ class Trainer:
             self.losses.update(loss.item(), batch_size)
             self.accs.update(acc, batch_size)
 
+            tqdm.write('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
+                     epoch_idx, batch_idx, len(self.dataloader), loss=self.losses, acc=self.accs))
             # print('Epoch: [{0}][{1}/{2}]\t Loss {loss.val:.4f}(avg: {loss.avg:.4f})\t Acc {acc.val:.3f} (avg: {acc.avg:.3f})'.format(
             #         epoch_idx, batch_idx, len(self.dataloader), loss=self.losses, acc=self.accs))
 
