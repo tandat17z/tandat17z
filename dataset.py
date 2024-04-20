@@ -24,7 +24,7 @@ class News20Dataset(Dataset):
         self.data = fetch_20newsgroups(
             data_home=cache_data_dir,
             subset=self.split,
-            # categories=['sci.crypt', 'sci.electronics', 'sci.med', 'sci.space'],
+            categories=['alt.atheism', 'comp.graphics', 'comp.os.ms-windows.misc', 'comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware'],
             shuffle=False,
             remove=('headers', 'footers', 'quotes'))
 
