@@ -11,7 +11,7 @@
 
 ### usage
 - Download and add `glove.6B.100d.txt` into `./data/glove/`
-- Run `python train.py <args>
+- Run `python train.py <args>`
 
 ### References:
 - [jaehunjung1/Hierarchical-Attention-Network](https://github.com/jaehunjung1/Hierarchical-Attention-Network)
